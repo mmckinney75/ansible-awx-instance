@@ -16,6 +16,25 @@ data "aws_ami" "ubuntu_ami" {
 }
 
 
+data "aws_route53_zone" "dns_zone" {
+  name = "mikemckinney.io."
+}
+
 data "http" "my_ip" {
   url = "https://api.ipify.org?format=txt"
+}
+
+
+data "template_file" "awx_id_rsa_pub" {
+    template = "${file("templates/id_rsa.pub.tpl")}"
+    vars {
+        awx_key_pub_openssh = "${tls_private_key.awx_key.public_key_openssh}"
+    }
+}
+
+data "template_file" "awx_id_rsa" {
+    template = "${file("templates/id_rsa.tpl")}"
+    vars {
+        awx_key_priv_pem = "${tls_private_key.awx_key.private_key_pem}"
+    }
 }

@@ -15,3 +15,7 @@ variable "subnet_id" {}
 variable "count" {
   default = 1
 }
+
+variable "ws_count" {
+  default = 1
+}
