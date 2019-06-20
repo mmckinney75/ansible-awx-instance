@@ -24,3 +24,9 @@ sudo npm install npm --global
 git clone https://github.com/ansible/awx.git
 cd awx/installer
 sudo ansible-playbook -i inventory install.yml
+
+# Install and configure Tower CLI
+sudo -H pip install ansible-tower-cli
+tower-cli config host `hostname`
+tower-cli config username admin
+tower-cli config password password
