@@ -4,23 +4,16 @@ resource "aws_security_group" "ansible_awx_sg" {
   description = "Security group for Ansible AWX server"
   vpc_id      = "${var.vpc_id}"
 
-  # HTTP access from anywhere
+  # HTTP access from my home and ALB
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["${data.http.my_ip.body}/32"]
+    security_groups = ["${aws_security_group.ansible_awx_alb_sg.id}"]
   }
 
-  # HTTPS access from anywhere
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["${data.http.my_ip.body}/32"]
-  }
-
-  # SSH access from anywhere
+  # SSH access from my home
   ingress {
     from_port   = 22
     to_port     = 22
@@ -35,6 +28,29 @@ resource "aws_security_group" "ansible_awx_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "ansible_awx_alb_sg" {
+  name        = "ansible_awx_alb_sg"
+  description = "Security group for ALB in front of Ansible AWX server"
+  vpc_id      = "${var.vpc_id}"
+
+  # HTTPS access from anywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # outbound access to HTTP (allows connectivity to AWX server)
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 
 # A security group to allow connections from Ansible AWX Node
 resource "aws_security_group" "ansible_managed_sg" {

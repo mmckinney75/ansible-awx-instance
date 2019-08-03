@@ -19,3 +19,7 @@ variable "count" {
 variable "ws_count" {
   default = 1
 }
+
+variable "awx_cert_arn" {}
+
+variable  "zone_name" {}

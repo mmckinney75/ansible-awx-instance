@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu_ami" {
 
 
 data "aws_route53_zone" "dns_zone" {
-  name = "mikemckinney.io."
+  name = "${var.zone_name}"
 }
 
 data "http" "my_ip" {
@@ -36,5 +36,20 @@ data "template_file" "awx_id_rsa" {
     template = "${file("templates/id_rsa.tpl")}"
     vars {
         awx_key_priv_pem = "${tls_private_key.awx_key.private_key_pem}"
+    }
+}
+
+data "aws_subnet_ids" "subnets_pub" {
+  vpc_id = "${var.vpc_id}"
+  filter {
+    name   = "mapPublicIpOnLaunch"
+    values = ["true"]       
+  }
+}
+
+data "template_file" "awx_install_script" {
+    template = "${file("templates/install_ansible_awx.sh.tpl")}"
+    vars {
+        awx_id_rsa = "${data.template_file.awx_id_rsa.rendered}"
     }
 }

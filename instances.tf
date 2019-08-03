@@ -17,7 +17,7 @@ resource "aws_instance" "ansible-awx-ubuntu" {
   }
 
   provisioner "file" {
-    source      = "scripts/install_ansible_awx.sh"
+    content     = "${data.template_file.awx_install_script.rendered}"
     destination = "/home/ubuntu/install_ansible_awx.sh"
   }
 
@@ -63,5 +63,4 @@ resource "aws_instance" "default-web-ubuntu" {
       "echo '${data.template_file.awx_id_rsa_pub.rendered}' >> /home/ubuntu/.ssh/authorized_keys",
     ]
   }
-
 }

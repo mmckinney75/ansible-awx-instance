@@ -1,0 +1,6 @@
+# # Create default SSH credential
+# ssh_machine_cred_inputs="username: ubuntu
+# ssh_key_data: |
+# ${awx_id_rsa}"
+#
+# tower-cli credential create --name="SSH - Ubuntu AWX" --organization="Default" --credential-type="Machine" --inputs="$ssh_machine_cred_inputs"
